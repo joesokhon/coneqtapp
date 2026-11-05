@@ -1,0 +1,3 @@
+# Send everyone to the main domain
+https://coneqtapp.netlify.app/*  https://coneqtapp.com/:splat  301!
+http://coneqtapp.netlify.app/*   https://coneqtapp.com/:splat  301!
