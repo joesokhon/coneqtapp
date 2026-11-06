@@ -41,12 +41,14 @@
   --max:1180px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation;overflow-x:hidden}
 body{
   font-family:"Plus Jakarta Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
+  background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;overflow-x:clip;
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
 }
+/* nothing may be wider than the screen (stops sideways scrolling / accidental zoom-out on phones) */
+main,footer,section{max-width:100%;overflow-x:clip}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 .ar{font-family:"Cairo",sans-serif;direction:rtl}
@@ -91,10 +93,13 @@ header.scrolled{background:rgba(5,10,36,.78);backdrop-filter:blur(14px);-webkit-
 @keyframes pulse{50%{box-shadow:0 0 0 8px rgba(16,185,129,0)}}
 .hero h1{font-size:clamp(40px,6vw,72px);line-height:1.04;font-weight:800;letter-spacing:-.035em;margin:22px 0 20px}
 .hero p.lead{font-size:clamp(16px,1.6vw,19px);color:var(--muted);max-width:540px}
-.hero .ar-tag{font-size:22px;font-weight:800;margin-top:18px;color:#fff;text-align:left}
-.hero .ar-tag span{color:var(--cyan)}
+/* hero: two voices (client + worker taglines) */
+.voices{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-top:20px}
+.voice p{font-family:"Cairo",sans-serif;direction:rtl;font-size:22px;font-weight:800;line-height:1.6;color:#fff}
+.voice p span{color:var(--cyan)}
+.voice.w p span{color:#c084fc}
 .waitlist{margin-top:30px;display:flex;gap:10px;max-width:520px;padding:6px;background:rgba(17,28,71,.7);border:1px solid rgba(59,130,246,.35);border-radius:999px}
-.waitlist input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;font:inherit;font-size:15px;padding:0 18px}
+.waitlist input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;font:inherit;font-size:16px;padding:0 18px}
 .waitlist input::placeholder{color:var(--dim)}
 .form-note{margin-top:12px;font-size:13px;color:var(--dim);min-height:20px}
 .form-note.ok{color:#6ee7b7}
@@ -105,6 +110,7 @@ header.scrolled{background:rgba(5,10,36,.78);backdrop-filter:blur(14px);-webkit-
 .store b{font-size:15px;line-height:1.2}
 
 .phones{position:relative;height:620px}
+.phones::before{content:"";position:absolute;left:8%;right:8%;bottom:-6px;height:110px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(124,92,255,.5),rgba(34,211,238,.12) 45%,transparent 70%);pointer-events:none}
 .phone{position:absolute;width:280px;border-radius:44px;padding:10px;background:linear-gradient(160deg,#2a3570,#0b1233);box-shadow:0 40px 80px -20px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.08),0 0 80px -10px rgba(124,92,255,.45)}
 .phone img{border-radius:35px;width:100%}
 .phone.p1{left:6%;top:0;transform:rotate(-6deg);z-index:2;animation:float 7s ease-in-out infinite}
@@ -121,7 +127,9 @@ header.scrolled{background:rgba(5,10,36,.78);backdrop-filter:blur(14px);-webkit-
 
 /* stats */
 .stats{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}
-.stat{padding:22px;border-radius:var(--radius);background:var(--card);border:1px solid var(--line)}
+.stat{position:relative;overflow:hidden;padding:22px;border-radius:var(--radius);background:var(--card);border:1px solid var(--line);transition:transform .25s,border-color .25s}
+.stat::before{content:"";position:absolute;left:22px;right:22px;top:0;height:2px;border-radius:2px;background:var(--grad);opacity:.75}
+.stat:hover{transform:translateY(-3px);border-color:rgba(124,92,255,.45)}
 .stat b{font-size:30px;font-weight:800;letter-spacing:-.02em;display:block}
 .stat span{color:var(--muted);font-size:14px}
 
@@ -193,32 +201,42 @@ section{position:relative}
 .feat h4{font-size:17px;font-weight:700}
 .feat p{color:var(--muted);font-size:14px}
 
-.avail{padding:26px;border-radius:30px;background:var(--bg-2);border:1px solid var(--line);box-shadow:0 30px 80px -30px rgba(124,92,255,.5)}
-.avail h3{font-size:24px;font-weight:800}
-.avail .sub{color:var(--muted);font-size:14px;margin-bottom:18px}
-.now{display:flex;align-items:center;gap:14px;padding:16px;border-radius:20px;border:1px solid rgba(16,185,129,.45);background:var(--card);margin-bottom:22px;transition:border-color .3s}
-.now.off{border-color:var(--line)}
-.now .ic{width:46px;height:46px;border-radius:50%;background:linear-gradient(145deg,#2fd89a,#11a59a);display:grid;place-items:center;flex:none;transition:filter .3s}
-.now.off .ic{filter:grayscale(1) brightness(.6)}
-.now .ic svg{width:22px;height:22px;color:#fff}
-.now b{display:block;font-size:16px}
-.now small{color:var(--muted);font-size:13px}
-.now .txt{flex:1}
-.days{border-radius:20px;border:1px solid var(--line);background:var(--card);padding:4px 16px}
-.day{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
-.day:last-child{border-bottom:0}
-.day .abbr{width:44px;height:44px;border-radius:12px;background:#2a1f6b;color:#c9bbff;font-weight:700;font-size:13px;display:grid;place-items:center;flex:none;transition:background .3s,color .3s}
-.day.off .abbr{background:#13204d;color:var(--dim)}
-.day .info{flex:1;min-width:0}
-.day b{display:block;font-size:15px;font-weight:600}
-.day small{color:#9cb0ff;font-size:13px}
-.day.off small{color:var(--dim)}
-.active-count{color:var(--muted);font-size:13px;margin:0 0 10px}
-.toggle{position:relative;width:56px;height:30px;border-radius:999px;background:#1c2756;border:0;cursor:pointer;flex:none;transition:background .25s}
-.toggle::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .25s}
-.toggle[aria-pressed="true"]{background:#8b4cf6}
-.toggle[aria-pressed="true"]::after{transform:translateX(26px)}
-.toggle:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+/* 3D "connect" scene (workers section) */
+.worker-grid>*{min-width:0}
+.scene3d{position:relative;height:540px;perspective:1100px;display:grid;place-items:center}
+.tilt{position:absolute;left:50%;top:50%;width:440px;height:440px;margin:-220px 0 0 -220px;transform-style:preserve-3d;transition:transform .5s ease-out;transform:rotateX(var(--ty,0deg)) rotateY(var(--tx,0deg))}
+.stage{position:relative;width:440px;height:440px;transform-style:preserve-3d;transform:rotateX(62deg)}
+.floor{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(124,92,255,.38) 0%,rgba(34,211,238,.12) 42%,transparent 70%)}
+.sweep{position:absolute;inset:20px;border-radius:50%;background:conic-gradient(from 0deg,rgba(34,211,238,.32),rgba(124,92,255,.08) 18%,transparent 26%);animation:rz 6s linear infinite}
+.ring-line{position:absolute;left:50%;top:50%;border-radius:50%;border:1.5px dashed rgba(140,160,255,.4);transform:translate(-50%,-50%)}
+.ring-line.r1{width:220px;height:220px}
+.ring-line.r2{width:400px;height:400px;border-style:solid;border-color:rgba(124,92,255,.28)}
+.pulse{position:absolute;left:50%;top:50%;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;border:2px solid var(--cyan);animation:pulse3d 3.2s ease-out infinite}
+.pulse.d2{animation-delay:-1.6s}
+@keyframes pulse3d{from{transform:scale(.4);opacity:.9}to{transform:scale(3.4);opacity:0}}
+.ring{position:absolute;inset:0;transform-style:preserve-3d;animation:rz 26s linear infinite}
+.ring.r1{--r:110px}
+.ring.r2{--r:200px;animation-duration:38s;animation-direction:reverse}
+@keyframes rz{to{transform:rotateZ(360deg)}}
+.orb{position:absolute;left:50%;top:50%;transform-style:preserve-3d;transform:rotateZ(var(--a)) translateX(var(--r)) rotateZ(calc(-1 * var(--a)))}
+.bb{transform-style:preserve-3d;transform:rotateX(-62deg);animation:counter 26s linear infinite}
+.ring.r2 .bb{animation-duration:38s;animation-direction:reverse}
+@keyframes counter{from{transform:rotateZ(0deg) rotateX(-62deg)}to{transform:rotateZ(-360deg) rotateX(-62deg)}}
+.tile{position:absolute;left:-24px;top:-58px;width:48px;height:48px;border-radius:15px;display:grid;place-items:center;color:#fff;box-shadow:0 14px 28px -8px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.35);animation:bob 4s ease-in-out infinite}
+.tile svg{width:22px;height:22px}
+.tile.who{border-radius:50%;font-weight:800;font-size:15px;box-shadow:0 0 0 4px rgba(5,10,36,.9),0 14px 28px -8px rgba(124,92,255,.7)}
+.tile.who::after{content:"";position:absolute;right:-1px;bottom:1px;width:12px;height:12px;border-radius:50%;background:var(--green);border:3px solid var(--bg)}
+.tile.sm{left:-20px;top:-50px;width:40px;height:40px}
+.tile.sm svg{width:18px;height:18px}
+.hub{position:absolute;left:50%;top:50%;transform-style:preserve-3d;transform:rotateX(-62deg)}
+.hub-in{position:absolute;left:-56px;top:-150px;width:112px;height:112px;border-radius:50%;padding:6px;background:var(--grad);box-shadow:0 0 0 8px rgba(124,92,255,.15),0 0 60px 6px rgba(124,92,255,.55),0 30px 50px -10px rgba(0,0,0,.7);animation:bob 5s ease-in-out infinite}
+.hub-in img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.beam{position:absolute;left:-2px;top:-60px;width:4px;height:60px;border-radius:4px;background:linear-gradient(var(--cyan),transparent);opacity:.8}
+.hub-shadow{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;background:radial-gradient(circle,rgba(34,211,238,.45),transparent 65%)}
+.scene3d .chip{animation:wob 7s ease-in-out infinite}
+.scene3d .chip.f1{left:0;top:34px}
+.scene3d .chip.f2{right:0;bottom:46px;animation-delay:-3.5s}
+@keyframes wob{0%,100%{transform:rotateY(-14deg) rotateX(6deg) translateY(0)}50%{transform:rotateY(10deg) rotateX(-4deg) translateY(-12px)}}
 
 /* trust band */
 .band{border-radius:32px;padding:40px;background:linear-gradient(135deg,rgba(59,130,246,.18),rgba(168,85,247,.18));border:1px solid rgba(124,92,255,.35);display:grid;grid-template-columns:1.1fr 1fr;gap:44px;position:relative;overflow:hidden;align-items:center}
@@ -324,7 +342,7 @@ footer{border-top:1px solid var(--line);padding:50px 0 40px;margin-top:100px}
 .reveal.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){
   .reveal{opacity:1;transform:none;transition:none}
-  .phone,.pill .dot,.orbit svg,.avf,.map *,.typing i,.m-search .cur{animation:none!important}
+  .phone,.pill .dot,.orbit svg,.avf,.map *,.typing i,.m-search .cur,.scene3d *{animation:none!important}
   html{scroll-behavior:auto}
 }
 
@@ -343,9 +361,10 @@ footer{border-top:1px solid var(--line);padding:50px 0 40px;margin-top:100px}
   .hero{padding:120px 0 60px}
   .hero-grid{grid-template-columns:1fr;text-align:center}
   .hero p.lead,.waitlist{margin-left:auto;margin-right:auto}
-  .hero .ar-tag{text-align:center}
+  .voices{align-items:center}
   .stores{justify-content:center}
   .phones{height:520px;max-width:520px;margin:0 auto;width:100%}
+  .avf.a2{right:auto;left:20%;top:-3%}
   .stats{grid-template-columns:repeat(2,1fr)}
   .split,.worker-grid{grid-template-columns:1fr}
   .steps{grid-template-columns:1fr}
@@ -362,6 +381,7 @@ footer{border-top:1px solid var(--line);padding:50px 0 40px;margin-top:100px}
   .waitlist{flex-direction:column;border-radius:22px;padding:8px}
   .waitlist input{padding:12px 14px}
   .waitlist .btn{width:100%}
+  .voice p{font-size:20px}
   .phones{height:430px}
   .phone{width:190px;border-radius:34px;padding:7px}
   .phone img{border-radius:28px}
@@ -387,15 +407,29 @@ footer{border-top:1px solid var(--line);padding:50px 0 40px;margin-top:100px}
   .avf{width:42px;height:42px;font-size:13px}
   .avf.a2,.avf.a4{width:36px;height:36px;font-size:12px}
   .mock{height:170px}
-  .avail{padding:18px;border-radius:24px}
+  .scene3d{height:420px}
+  .tilt{scale:.72}
+  .scene3d .chip.f1{top:6px}
+  .scene3d .chip.f2{bottom:10px}
   .cta{padding:56px 20px;border-radius:28px}
   .cta .logo-big{width:120px;height:120px}
   .foot-links{gap:36px}
   .sec{padding:64px 0}
   .sec-head{margin-bottom:36px}
 }
+@media (max-width:400px){
+  .scene3d{height:360px}
+  .tilt{scale:.62}
+  .scene3d .chip{padding:9px 11px}
+  .scene3d .chip b{font-size:12px}
+  .scene3d .chip span{font-size:11px}
+}
 @media (max-width:360px){
   .phone{width:165px}
+  .tilt{scale:.56}
+  .scene3d{height:330px}
+  .chip .ic{width:28px;height:28px}
+  .chip .ic svg{width:16px;height:16px}
 }
 </style>
 </head>
@@ -438,7 +472,10 @@ footer{border-top:1px solid var(--line);padding:50px 0 40px;margin-top:100px}
       <span class="pill"><span class="dot"></span> Launching soon · قريباً</span>
       <h1>Need it.<br><span class="grad-text">Connect it.</span></h1>
       <p class="lead">ConeQt connects you with trusted workers and services near you, from electricians and carpenters to tutors and caregivers. Search, book and chat in one app.</p>
-      <p class="ar-tag ar">بدنا حدا... <span>بس مين؟</span></p>
+      <div class="voices">
+        <div class="voice"><p>بدنا حدا... <span>بس مين؟</span></p></div>
+        <div class="voice w"><p>شغلك بيحكي عنك. <span>خلّيه يوصل.</span></p></div>
+      </div>
 
 
       <div class="stores">
@@ -612,7 +649,7 @@ footer{border-top:1px solid var(--line);padding:50px 0 40px;margin-top:100px}
     <div class="reveal">
       <span class="eyebrow">For workers & service providers</span>
       <h2 class="h2">You decide <span class="grad-text">when clients can book you</span></h2>
-      <p style="color:var(--muted);font-size:17px;margin-top:16px">Turn on <b style="color:#fff">Available now</b> when you're free for a job, or set a weekly schedule that fits your life. Try it in the demo.</p>
+      <p style="color:var(--muted);font-size:17px;margin-top:16px">Turn on <b style="color:#fff">Available now</b> when you're free for a job, or set a weekly schedule that fits your life. Nearby clients find you and book you directly.</p>
       <div class="feat-list">
         <div class="feat">
           <div class="ic g-green"><i data-lucide="zap"></i></div>
@@ -629,16 +666,40 @@ footer{border-top:1px solid var(--line);padding:50px 0 40px;margin-top:100px}
       </div>
     </div>
 
-    <div class="avail reveal" aria-label="Interactive availability demo">
-      <h3>Availability</h3>
-      <p class="sub">Choose when clients can book you</p>
-      <div class="now" id="nowCard">
-        <div class="ic"><i data-lucide="zap"></i></div>
-        <div class="txt"><b>Available now</b><small id="nowText">Clients can book you right away</small></div>
-        <button class="toggle" id="nowToggle" aria-pressed="true" aria-label="Available now"></button>
+    <div class="scene3d reveal" id="scene3d" role="img" aria-label="Animated illustration: ConeQt at the centre, connecting clients with nearby workers and services">
+      <div class="tilt" id="tilt">
+        <div class="stage">
+          <div class="floor"></div>
+          <div class="sweep"></div>
+          <div class="ring-line r1"></div>
+          <div class="ring-line r2"></div>
+          <div class="pulse"></div><div class="pulse d2"></div>
+          <div class="hub-shadow"></div>
+          <div class="ring r1">
+            <div class="orb" style="--a:0deg"><div class="bb"><div class="tile g-orange"><i data-lucide="zap"></i></div></div></div>
+            <div class="orb" style="--a:90deg"><div class="bb"><div class="tile g-cyan" style="animation-delay:-1s"><i data-lucide="snowflake"></i></div></div></div>
+            <div class="orb" style="--a:180deg"><div class="bb"><div class="tile g-blue" style="animation-delay:-2s"><i data-lucide="wrench"></i></div></div></div>
+            <div class="orb" style="--a:270deg"><div class="bb"><div class="tile g-violet" style="animation-delay:-3s"><i data-lucide="graduation-cap"></i></div></div></div>
+          </div>
+          <div class="ring r2">
+            <div class="orb" style="--a:30deg"><div class="bb"><div class="tile who g-cyan">KH</div></div></div>
+            <div class="orb" style="--a:90deg"><div class="bb"><div class="tile sm g-green" style="animation-delay:-1.5s"><i data-lucide="leaf"></i></div></div></div>
+            <div class="orb" style="--a:150deg"><div class="bb"><div class="tile who g-pink" style="animation-delay:-.7s">MA</div></div></div>
+            <div class="orb" style="--a:210deg"><div class="bb"><div class="tile sm g-orange" style="animation-delay:-2.4s"><i data-lucide="paw-print"></i></div></div></div>
+            <div class="orb" style="--a:270deg"><div class="bb"><div class="tile who g-orange" style="animation-delay:-3.1s">RS</div></div></div>
+            <div class="orb" style="--a:330deg"><div class="bb"><div class="tile sm g-pink" style="animation-delay:-1.9s"><i data-lucide="camera"></i></div></div></div>
+          </div>
+          <div class="hub"><div class="beam"></div><div class="hub-in"><img src="assets/logo-mark.png" alt=""></div></div>
+        </div>
       </div>
-      <p class="active-count" id="activeCount">Active 6 of 7 days</p>
-      <div class="days" id="days"></div>
+      <div class="chip f1">
+        <div class="ic g-violet"><i data-lucide="bell-ring"></i></div>
+        <div><b>New booking request</b><span>AC repair · Today 14:00</span></div>
+      </div>
+      <div class="chip f2">
+        <div class="ic g-green"><i data-lucide="navigation"></i></div>
+        <div><b>Karim is on the way</b><span>Arrives in 12 min</span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -832,37 +893,16 @@ const half = Math.ceil(cats.length/2);
   document.getElementById(id).innerHTML = html + html.replace(/class="cat"/g,'class="cat" aria-hidden="true"'); // duplicated for seamless loop
 });
 
-// Availability demo
-const days = [
-  ["Mon","Monday","09:00 – 17:00",true],["Tue","Tuesday","09:00 – 17:00",true],
-  ["Wed","Wednesday","09:00 – 17:00",true],["Thu","Thursday","09:00 – 17:00",true],
-  ["Fri","Friday","09:00 – 15:00",true],["Sat","Saturday","10:00 – 14:00",true],
-  ["Sun","Sunday","10:00 – 14:00",false]
-];
-const daysEl = document.getElementById('days');
-const clockSvg = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="vertical-align:-2px;margin-right:6px"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
-function renderDays(){
-  daysEl.innerHTML = days.map((d,i)=>`
-    <div class="day ${d[3]?'':'off'}">
-      <div class="abbr">${d[0]}</div>
-      <div class="info"><b>${d[1]}</b><small>${d[3]? clockSvg + d[2] : 'Unavailable'}</small></div>
-      <button class="toggle" data-i="${i}" aria-pressed="${d[3]}" aria-label="${d[1]}"></button>
-    </div>`).join('');
-  document.getElementById('activeCount').textContent = `Active ${days.filter(d=>d[3]).length} of 7 days`;
+// 3D scene: gentle tilt following the mouse (desktop only)
+const scene = document.getElementById('scene3d'), tilt = document.getElementById('tilt');
+if (scene && matchMedia('(hover:hover) and (prefers-reduced-motion:no-preference)').matches) {
+  scene.addEventListener('pointermove', e => {
+    const r = scene.getBoundingClientRect();
+    tilt.style.setProperty('--tx', ((e.clientX - r.left) / r.width - .5) * 16 + 'deg');
+    tilt.style.setProperty('--ty', -((e.clientY - r.top) / r.height - .5) * 10 + 'deg');
+  });
+  scene.addEventListener('pointerleave', () => { tilt.style.removeProperty('--tx'); tilt.style.removeProperty('--ty'); });
 }
-daysEl.addEventListener('click', e => {
-  const b = e.target.closest('.toggle'); if(!b) return;
-  days[b.dataset.i][3] = !days[b.dataset.i][3]; renderDays();
-  daysEl.querySelector(`[data-i="${b.dataset.i}"]`).focus();
-});
-renderDays();
-const nowT = document.getElementById('nowToggle');
-nowT.addEventListener('click', () => {
-  const on = nowT.getAttribute('aria-pressed') !== 'true';
-  nowT.setAttribute('aria-pressed', on);
-  document.getElementById('nowCard').classList.toggle('off', !on);
-  document.getElementById('nowText').textContent = on ? 'Clients can book you right away' : 'Only your weekly schedule is bookable';
-});
 
 // Waitlist forms (front-end only; connect to your backend/email service)
 document.querySelectorAll('.js-waitlist').forEach(f => f.addEventListener('submit', e => {
